@@ -2,11 +2,12 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chagpt v2</title>
+  <!-- Metadatos del documento -->
+  <meta charset="UTF-8"> <!-- Define la codificación de caracteres como UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura la vista para dispositivos móviles -->
+  <title>Chagpt v2</title> <!-- Título de la página -->
   <style>
-    /* INCIO RESETEO DE ESTILOS  */
+    /* INICIO RESETEO DE ESTILOS */
     * {
       margin: 0;
       padding: 0;
@@ -20,6 +21,7 @@
 
     body {
       min-height: 100dvh;
+      /* Altura mínima del cuerpo igual a la altura de la ventana de visualización */
     }
 
     input,
@@ -27,10 +29,12 @@
     textarea,
     select {
       font: inherit;
+      /* Hereda la fuente del elemento padre */
     }
 
     p {
       text-wrap: pretty;
+      /* Ajuste del texto */
     }
 
     h1,
@@ -40,6 +44,7 @@
     h5,
     h6 {
       text-wrap: balance;
+      /* Ajuste del texto para encabezados */
     }
 
     img,
@@ -47,10 +52,12 @@
     svg {
       height: auto;
       max-width: 100%;
+      /* Imágenes, videos y SVGs no superarán el 100% del ancho del contenedor */
     }
 
     @media (prefers-reduced-motion:reduce) {
 
+      /* Reduce las animaciones para usuarios que prefieren menos movimiento */
       *,
       *::before,
       *::after {
@@ -62,17 +69,20 @@
       }
     }
 
-    /* FIN RESETEO DE ESTILOS  */
+    /* FIN RESETEO DE ESTILOS */
 
+    /* Estilo general del cuerpo del documento */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       display: grid;
       place-content: center;
+      /* Centra el contenido en la página */
       height: 100dvh;
     }
 
+    /* Estilo del encabezado */
     header {
       background-color: #333;
       color: #fff;
@@ -80,40 +90,53 @@
       padding: 1rem;
     }
 
+    /* Estilo del contenedor principal */
     main {
       padding: 1rem;
       max-width: 100%;
       height: 70vh;
+      /* Altura de la sección principal */
       background: #fff;
       border: 1px solid #ccc;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      /* Sombra alrededor del contenedor */
       overflow-y: auto;
+      /* Permite el desplazamiento vertical */
       margin-bottom: 1rem;
       scroll-behavior: smooth;
+      /* Desplazamiento suave */
     }
 
+    /* Estilo de la sección interna */
     section {
       max-width: 600px;
       margin: 0 auto;
+      /* Centra horizontalmente la sección */
     }
 
+    /* Estilo de la lista de mensajes */
     ul {
       list-style: none;
+      /* Sin estilo de lista */
       padding: 0;
       display: flex;
       flex-direction: column;
+      /* Coloca los elementos de la lista en columna */
     }
 
+    /* Estilo de cada mensaje */
     li {
       margin-bottom: 1rem;
     }
 
+    /* Estilo general de los mensajes */
     .message {
       padding: 1rem 1.5rem;
       border-radius: 5px;
       display: flex;
       width: 70%;
+      /* Ancho del mensaje */
       flex-direction: column;
       gap: 0.5rem;
       margin: 0.5rem 0;
@@ -149,6 +172,7 @@
         color: #fff;
         text-align: right;
         align-self: flex-end;
+        /* Alinea el mensaje del usuario a la derecha */
         align-items: flex-end;
 
         span,
@@ -162,6 +186,7 @@
         color: #333;
         text-align: left;
         align-self: flex-start;
+        /* Alinea el mensaje del bot a la izquierda */
         align-items: flex-start;
 
         span,
@@ -185,14 +210,17 @@
       text-align: right;
     }
 
+    /* Estilo del formulario de chat */
     #chat-form {
       display: flex;
       max-width: 600px;
       margin: 0 auto;
+      /* Centra el formulario horizontalmente */
       padding: 1rem;
       gap: 1rem;
     }
 
+    /* Estilo del campo de entrada del chat */
     #chat-input {
       flex: 1;
       padding: 0.5rem;
@@ -200,6 +228,7 @@
       border-radius: 5px;
     }
 
+    /* Estilo del botón de envío */
     #chat-form button {
       padding: 0.5rem 1rem;
       border: none;
@@ -234,103 +263,105 @@
       color: #bbbbbb;
     }
 
+    /* Estilo del pie de página */
     footer {
       background-color: #333;
       color: #fff;
       text-align: center;
       padding: 1rem;
       position: fixed;
+      /* Fija el pie de página en la parte inferior */
       bottom: 0;
       left: 0;
       width: 100%;
     }
   </style>
-  <link rel="modulepreload" href="worker.js">
   <script type="module">
-    import { CreateWebWorkerMLCEngine } from "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/+esm"
+    // Importa el módulo CreateMLCEngine desde la URL especificada
+    import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm"
 
+    // Funciones auxiliares para seleccionar elementos del DOM
     const $ = ( selector ) => document.querySelector( selector );
     const $$ = ( selector ) => document.querySelectorAll( selector );
 
-    const worker = new Worker( 'worker.js' );
-
+    // Define el modelo seleccionado
     const SELECTED_MODEL = 'gemma-2b-it-q4f32_1-MLC'
 
-    const $chatForm = $( '#chat-form' );
-    const $chatInput = $( '#chat-input' );
-    const $chatTemplate = $( '#chat-template' );
-    const $messages = $( 'ul' );
-    const $container = $( 'main' );
-    const $button = $( 'button' );
-    const $small = $( 'small' );
+    // Selecciona los elementos del DOM
+    const $chatForm = $( '#chat-form' ); // Selecciona el formulario del chat
+    const $chatInput = $( '#chat-input' ); // Selecciona el campo de entrada del chat
+    const $chatTemplate = $( '#chat-template' ); // Selecciona el template del chat
+    const $messages = $( 'ul' ); // Selecciona la lista de mensajes
+    const $container = $( 'main' ); // Selecciona el contenedor principal
+    const $button = $( 'button' ); // Selecciona el botón de enviar
+    const $small = $( 'small' ); // Selecciona el elemento small
 
-    let messages = [];
+    let messages = []; // Arreglo para almacenar los mensajes
 
-    const webWorker = new Worker( 'worker.js', {
-        type: 'module'
-      } );
-
-    const engine = await CreateWebWorkerMLCEngine( webWorker, SELECTED_MODEL, {
+    // Crea una instancia del motor de ML y establece el callback para el progreso de inicialización
+    const engine = await CreateMLCEngine( SELECTED_MODEL, {
       initProgressCallback: ( { progress, text } ) => {
         $small.textContent = `${text}`;
-        progress === 1 && ( $small.textContent = '' );
-        progress === 0 && ( $button.disabled = true );
-        progress === 1 && ( $button.disabled = false );
+        if ( progress === 1 ) {
+          $small.textContent = '';
+          $button.disabled = false; // Habilita el botón si el progreso es 1
+        } else if ( progress === 0 ) {
+          $button.disabled = true; // Deshabilita el botón si el progreso es 0
+        }
       }
-    } )
+    } );
 
+    // Función para añadir un mensaje a la interfaz
     function addMessage( sender, message ) {
-      const template = $chatTemplate.content.cloneNode( true );
-      const [ span, p ] = template.querySelectorAll( 'span, p' );
-      span.textContent = sender;
-      p.textContent = message;
-      template.querySelector( 'li' ).classList.add( 'message', sender );
-      $messages.appendChild( template );
-      $container.scrollTop = $container.scrollHeight;
-      return p
+      const template = $chatTemplate.content.cloneNode( true ); // Clona el contenido del template
+      const [ span, p ] = template.querySelectorAll( 'span, p' ); // Selecciona los elementos span y p dentro del template
+      span.textContent = sender; // Asigna el remitente al span
+      p.textContent = message; // Asigna el mensaje al p
+      template.querySelector( 'li' ).classList.add( 'message', sender ); // Añade las clases correspondientes al li
+      $messages.appendChild( template ); // Añade el mensaje a la lista de mensajes
+      $container.scrollTop = $container.scrollHeight; // Desplaza el contenedor hacia abajo
+      return p; // Retorna el elemento p para actualizar el texto posteriormente
     }
 
+    // Maneja el evento de envío del formulario
     $chatForm.onsubmit = async ( e ) => {
-      e.preventDefault();
-      const message = $chatInput.value;
-      if ( !message ) return;
-      addMessage( 'user', message );
-      $chatInput.value = '';
+      e.preventDefault(); // Previene el comportamiento por defecto del formulario
+      const message = $chatInput.value; // Obtiene el valor del campo de entrada
+      if ( !message ) return; // Si no hay mensaje, no hace nada
+      addMessage( 'user', message ); // Añade el mensaje del usuario a la interfaz
+      $chatInput.value = ''; // Limpia el campo de entrada
       const userMessage = {
         role: 'user',
         content: message
-      }
-      messages.push( userMessage ); // Guardamos el mensaje del usuario
-      const chunks = await engine.chat.completions.create( { messages, stream: true } )
-      let reply = ''
-      const botTextMessage = addMessage( 'assistant', '' );
+      };
+      messages.push( userMessage ); // Guarda el mensaje del usuario en el arreglo de mensajes
+      const chunks = await engine.chat.completions.create( { messages, stream: true } ); // Genera la respuesta del bot de forma incremental
+      let reply = '';
+      const botTextMessage = addMessage( 'assistant', '' ); // Añade un mensaje vacío del bot a la interfaz
       for await ( const chunk of chunks ) {
-        const choise = chunk?.choices[ 0 ]
-        const content = choise?.delta?.content ?? ""
-        reply += content
-        botTextMessage.textContent = reply
+        const choice = chunk?.choices[ 0 ];
+        const content = choice?.delta?.content ?? '';
+        reply += content;
+        botTextMessage.textContent = reply; // Actualiza el mensaje del bot en la interfaz
       }
-      //const botMessage = reply.choices[ 0 ].message.content;
       const botReply = {
         role: 'assistant',
         content: reply
-      }
-      messages.push( botReply );
-      $container.scrollTop = $container.scrollHeight;
-      //addMessage( 'assistant', botMessage );
-      //console.log( reply, 'RESPUESTA' )
+      };
+      messages.push( botReply ); // Guarda la respuesta del bot en el arreglo de mensajes
+      $container.scrollTop = $container.scrollHeight; // Desplaza el contenedor principal hacia abajo para mostrar la respuesta completa
     };
   </script>
 </head>
 
 <body>
   <header>
-    <h1>Chagpt v2</h1>
+    <h1>Chagpt v2</h1> <!-- Encabezado de la página -->
   </header>
   <main>
     <section>
       <ul>
-
+        <!-- Aquí se añadirán los mensajes -->
       </ul>
     </section>
   </main>
@@ -340,17 +371,18 @@
   </form>
 
   <br>
-  <small></small>
+  <small></small> <!-- Para mostrar el progreso de inicialización -->
 
   <template id="chat-template">
     <li class="message">
-      <span></span>
-      <p></p>
+      <span></span> <!-- Para el remitente -->
+      <p></p> <!-- Para el contenido del mensaje -->
     </li>
+  </template>
 
-    <footer>
-      <p>Chagpt v2</p>
-    </footer>
+  <footer>
+    <p>Chagpt v2</p> <!-- Pie de página -->
+  </footer>
 </body>
 
 </html>
